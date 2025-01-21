@@ -1,7 +1,7 @@
 import React from 'react';
 
 type State = {
-  currentTime: string;
+  today: string;
 };
 
 interface Props {
@@ -10,18 +10,23 @@ interface Props {
 
 export class Clock extends React.Component<Props, State> {
   state: State = {
-    currentTime: new Date().toUTCString().slice(-12, -4),
+    today: new Date().toUTCString().slice(-12, -4),
   };
 
   timerTimeId = 0;
 
+  timerConsoleId = 0;
+
   componentDidMount(): void {
     this.timerTimeId = window.setInterval(() => {
-      this.setState({
-        currentTime: `${new Date().toUTCString().slice(-12, -4)}`,
+      this.setState({ today: `${new Date().toUTCString().slice(-12, -4)}` });
+    }, 1000);
+
+    this.timerConsoleId = window.setInterval(() => {
+      this.setState((prevState: Readonly<State>) => {
+        // eslint-disable-next-line no-console
+        console.log(prevState.today);
       });
-      // eslint-disable-next-line no-console
-      console.log(this.state.currentTime);
     }, 1000);
   }
 
@@ -34,6 +39,7 @@ export class Clock extends React.Component<Props, State> {
 
   componentWillUnmount(): void {
     window.clearInterval(this.timerTimeId);
+    window.clearInterval(this.timerConsoleId);
   }
 
   render() {
@@ -43,7 +49,7 @@ export class Clock extends React.Component<Props, State> {
 
         {' time is '}
 
-        <span className="Clock__time">{this.state.currentTime}</span>
+        <span className="Clock__time">{this.state.today}</span>
       </div>
     );
   }
